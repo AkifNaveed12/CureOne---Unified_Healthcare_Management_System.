@@ -1,0 +1,134 @@
+Appointments & Scheduling Module (com.cureone.appointments)
+----------------------------------------------------------
+Purpose
+-------
+This module manages appointment scheduling between patients and doctors, timeslot handling, and basic appointment lifecycle (schedule, cancel, list). It can be used by controllers or other modules (e.g., patients) to coordinate appointments.
+
+Sub-packages & Responsibilities
+-------------------------------
+1) model
+   - Domain objects for scheduling.
+   - Classes: Appointment, Doctor, Timeslot.
+   - Typical fields:
+     - Appointment: appointmentId, patientId, doctorId, date, time
+     - Doctor: id, name, specialization
+     - Timeslot: date, startTime, endTime
+
+2) repository
+   - Persistent access layer for appointments.
+   - Class: AppointmentRepository (interface).
+   - Typical methods: save(appointment), findAll(), findById(id), update(appointment), delete(id)
+
+3) service
+   - Implements scheduling rules and validation:
+     - Prevent double-booking (simple check in repository)
+     - Validate timeslot formats and availability
+   - Class: AppointmentService
+   - Typical methods:
+     - scheduleAppointment(Appointment)
+     - cancelAppointment(appointmentId)
+     - getAppointmentById(id)
+     - listAppointments()
+
+4) controller
+   - User-facing scheduling operations.
+   - Class: AppointmentController
+   - Typical methods:
+     - schedule(Appointment), cancel(int), listAll()
+
+Classes & Key Members (summary)
+-------------------------------
+- Appointment
+  - Fields: int appointmentId, int patientId, int doctorId, String date, String time
+  - Purpose: represent scheduled appointments.
+
+- Doctor
+  - Fields: int id, String name, String specialization
+  - Purpose: store doctor metadata and specialization for matching.
+
+- Timeslot
+  - Fields: String date, String startTime, String endTime
+  - Purpose: represent available booking windows.
+
+- AppointmentRepository (interface)
+  - Methods: save, findAll, findById, update, delete
+  - Purpose: isolate data access for appointments.
+
+- AppointmentService
+  - Methods: scheduleAppointment, cancelAppointment, getAppointmentById, listAppointments
+  - Purpose: check availability, apply business rules, and call repository.
+
+- AppointmentController
+  - Methods: schedule, cancel, listAll
+  - Purpose: accept requests from user/UI and call service layer.
+
+
+Workflow Overview
+Controller → gets input from the user
+Service → processes the data, validates it, and applies business logic
+Repository → stores or retrieves data from arrays/files
+Model → represents the actual data objects
+
+Example Flow:
+User adds a medicine via MedicineController → MedicineService validates and processes → MedicineRepository saves it → Medicine object represents the medicine.
+
+Workflow Diagram (Data Flow)
+User Input
+│
+▼
+Controller (com.cureone.controller)
+│
+▼
+Service (com.cureone.service)
+│
+▼
+Repository (com.cureone.repository)
+│
+▼
+Model Objects (com.cureone.model)
+
+Flow Explanation:
+Controller receives user input (e.g., add a new medicine).
+Service validates input, applies business rules (e.g., check stock limits).
+Repository saves or retrieves data (arrays or text files).
+Model stores the data in objects representing real-world entities.
+Result is returned back through Service → Controller → User.
+
+Workflow Overview
+Controller → gets input from the user
+Service → processes the data, validates it, and applies business logic
+Repository → stores or retrieves data from arrays/files
+Model → represents the actual data objects
+
+Example Flow:
+User adds a medicine via MedicineController → MedicineService validates and processes → MedicineRepository saves it → Medicine object represents the medicine.
+
+Workflow Diagram (Data Flow)
+User Input
+│
+▼
+Controller (com.cureone.controller)
+│
+▼
+Service (com.cureone.service)
+│
+▼
+Repository (com.cureone.repository)
+│
+▼
+Model Objects (com.cureone.model)
+
+Flow Explanation:
+Controller receives user input (e.g., add a new medicine).
+Service validates input, applies business rules (e.g., check stock limits).
+Repository saves or retrieves data (arrays or text files).
+Model stores the data in objects representing real-world entities.
+Result is returned back through Service → Controller → User.
+
+
+Notes & Implementation Tips
+---------------------------
+- Use patientId and doctorId references (integers) to avoid direct coupling to other module repositories; cross-module interaction should go through service-level APIs.
+- For scheduling checks, service may query the repository for conflicting appointments.
+- Keep date/time as String for skeleton; consider LocalDate/LocalTime later.
+- Provide clear error messages through Result<T> when scheduling fails (e.g., timeslot occupied).
