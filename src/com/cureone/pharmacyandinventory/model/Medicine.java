@@ -1,4 +1,70 @@
 package com.cureone.pharmacyandinventory.model;
 
 public class Medicine {
+
+    //medicine class consists of the blueprint of a medicine objects all the necessary details
+    //and the getter setter +  constructors are present here....
+    private int id, quantity;
+    private String name, manufacturer, expiryDate;
+    private double price;
+    private Category category;
+
+    public Medicine(){}
+    public Medicine(int id, String name, String manufacturer, String expiryDate, double price, Category category, int quantity) {
+        this.id = id;
+        this.name = name;
+        this.manufacturer = manufacturer;
+        this.expiryDate = expiryDate;
+        this.price = price;
+        this.category = category;
+        this.quantity = quantity;
+    }
+
+    public int getId() {
+        return id;
+    }
+    public void setId(int id) {
+        this.id = id;
+    }
+    public String getName(){
+        return name;
+    }
+    public void setName(String name){
+        this.name = name;
+    }
+    public String getManufacturer(){
+        return manufacturer;
+    }
+    public void setManufacturer(String manufacturer){
+        this.manufacturer = manufacturer;
+    }
+    public String getExpiryDate(){
+        return expiryDate;
+    }
+    public void setExpiryDate(String expiryDate){
+        this.expiryDate = expiryDate;
+    }
+    public double getPrice(){
+        return price;
+    }
+    public void setPrice(double price){
+        this.price = price;
+    }
+    public Category getCategory(){
+        return category;
+    }
+    public void setCategory(Category category){
+        this.category = category;
+    }
+    public int getQuantity(){
+        return quantity;
+    }
+    public void setQuantity(int quantity){
+        this.quantity = quantity;
+    }
+
+    public String toString(){
+        return "Medicine\n1.Name=" +name+ "\n2.id=" +id+ "\n3.Category=" +category+ "\n4.Price=" +price+
+                "\n5.Quantity=" +quantity+ "\n6.ExpiryDate=" +expiryDate+"\n7.Manufacturer=" +manufacturer;
+    }
 }
