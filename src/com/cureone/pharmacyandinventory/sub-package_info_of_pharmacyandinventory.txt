@@ -54,7 +54,7 @@ Classes & Key Members (summary)
   - Purpose: represent non-medicine inventory (consumables) with stock counts.
 
 - Category
-  - Fields: int id, String name
+  - Fields: int id, String name,  String Description
   - Purpose: group medicines into categories (e.g., analgesics, antibiotics).
 
 - MedicineRepository (interface)
