@@ -28,19 +28,19 @@ public class InventoryItem {
     public void setItemId(int itemId){
         this.itemId = itemId;
     }
-    public int getQuantity(int quantity){
+    public int getQuantity(){
         return this.quantity;
     }
     public void setQuantity(int quantity){
         this.quantity = quantity;
     }
-    public Medicine getMedicine(Medicine medicine){
+    public Medicine getMedicine(){
         return this.medicine;
     }
     public void setMedicine(Medicine medicine){
         this.medicine = medicine;
     }
-    public LocalDate getExpiryDate(LocalDate expiryDate){
+    public LocalDate getExpiryDate(){
         return this.expiryDate;
     }
     public void setExpiryDate(LocalDate expiryDate){

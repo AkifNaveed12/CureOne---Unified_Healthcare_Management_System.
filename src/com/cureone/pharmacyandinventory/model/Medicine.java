@@ -1,16 +1,18 @@
 package com.cureone.pharmacyandinventory.model;
-
+import java.time.LocalDate;
 public class Medicine {
 
     //medicine class consists of the blueprint of a medicine objects all the necessary details
     //and the getter setter +  constructors are present here....
     private int id, quantity;
-    private String name, manufacturer, expiryDate;
+    private String name, manufacturer;
+    private LocalDate expiryDate;
+
     private double price;
     private Category category;
 
     public Medicine(){}
-    public Medicine(int id, String name, String manufacturer, String expiryDate, double price, Category category, int quantity) {
+    public Medicine(int id, String name, String manufacturer, LocalDate expiryDate, double price, Category category, int quantity) {
         this.id = id;
         this.name = name;
         this.manufacturer = manufacturer;
@@ -38,10 +40,10 @@ public class Medicine {
     public void setManufacturer(String manufacturer){
         this.manufacturer = manufacturer;
     }
-    public String getExpiryDate(){
+    public LocalDate getExpiryDate(){
         return expiryDate;
     }
-    public void setExpiryDate(String expiryDate){
+    public void setExpiryDate(LocalDate expiryDate){
         this.expiryDate = expiryDate;
     }
     public double getPrice(){
