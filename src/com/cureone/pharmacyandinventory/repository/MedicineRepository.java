@@ -1,4 +1,24 @@
 package com.cureone.pharmacyandinventory.repository;
 
-public class MedicineRepository {
+import com.cureone.pharmacyandinventory.model.Medicine;
+import java.util.List;
+
+public interface MedicineRepository {
+
+    void save(Medicine medicine);
+
+    List<Medicine> findAll();
+
+    Medicine findById(int id);
+
+    boolean update(Medicine medicine);
+
+    boolean delete(int id);
+
+    boolean existsById(int id);
+
+
+    List<Medicine> findByName(String name);
+
+    List<Medicine> findExpiredMedicines();
 }
