@@ -1,100 +1,141 @@
 package com.cureone.pharmacyandinventory.controller;
 
-
-
-import com.cureone.pharmacyandinventory.model.Category;
-import com.cureone.pharmacyandinventory.model.Medicine;
+import com.cureone.common.Result;
 import com.cureone.pharmacyandinventory.model.InventoryItem;
-import com.cureone.pharmacyandinventory.repository.*;
+import com.cureone.pharmacyandinventory.model.Medicine;
+import com.cureone.pharmacyandinventory.service.InventoryServices;
+import com.cureone.pharmacyandinventory.service.MedicineService;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Scanner;
 
 public class InventoryController {
 
-    public static void main(String[] args) {
+    private final InventoryServices inventoryService;
+    private final MedicineService medicineService;
+    private final Scanner scanner = new Scanner(System.in);
 
-        // ---------- REPOSITORIES ----------
-        MedicineRepository medicineRepo = new InMemoryMedicineRepository();
-        InventoryRepository inventoryRepo = new InMemoryInventoryRepository();
-
-        System.out.println("-----------------------------------------------------");
-        System.out.println("        TESTING PHARMACY & INVENTORY MODULE");
-        System.out.println("-----------------------------------------------------");
-
-        // ---------- CATEGORY ----------
-        Category cat1 = new Category("Pain Relief", "Medicines used for relief from body pain", 1);
-        Category cat2 = new Category("Antibiotics", "Medicines used to treat bacterial infections", 2);
-
-        System.out.println("\nCreated Categories:");
-        System.out.println(cat1);
-        System.out.println(cat2);
-
-        // ---------- MEDICINE ----------
-        Medicine m1 = new Medicine(
-                0,
-                "Panadol",
-                "GSK",
-                LocalDate.of(2025 , 6,30),50.6, cat1,15
-        );
-
-        Medicine m2 = new Medicine(
-                0, "Augmentin", "SKB", LocalDate.of(2023,12,10),
-                100.1, cat2, 50
-        );
-
-        medicineRepo.save(m1);
-        medicineRepo.save(m2);
-
-        System.out.println("\nAfter Saving Medicines:");
-        print(medicineRepo.findAll());
-
-        // ---------- FIND BY ID ----------
-        System.out.println("\nFind Medicine By ID 1:");
-        System.out.println(medicineRepo.findById(1));
-
-        // ---------- EXPIRED MEDICINES ----------
-        System.out.println("\nExpired Medicines:");
-        print(medicineRepo.findExpiredMedicines());
-
-        // ---------- UPDATE ----------
-        System.out.println("\nUpdating Medicine 1...");
-        m1.setManufacturer("Haleon");
-        medicineRepo.update(m1);
-        System.out.println(medicineRepo.findById(m1.getId()));
-
-        // ---------- INVENTORY ITEMS ----------
-        InventoryItem item1 = new InventoryItem(
-                0, 50, 7, m1, LocalDate.of(2025,8,12),
-                "Shelf A-7 Row No # 03",50.6
-        );
-
-        InventoryItem item2 = new InventoryItem(
-                0,50,5,m2,LocalDate.of(2023,12,10),
-                "Shelf B-10 Row No # 03",100.1
-        );
-
-        inventoryRepo.save(item1);
-        inventoryRepo.save(item2);
-
-        System.out.println("\nInventory Items After Saving:");
-        print(inventoryRepo.findAll());
-
-        // ---------- DELETE ----------
-        System.out.println("\nDeleting Inventory Item ID 1...");
-        inventoryRepo.delete(1);
-        print(inventoryRepo.findAll());
-
-        System.out.println("\nAll tests executed successfully!");
+    public InventoryController(InventoryServices inventoryService, MedicineService medicineService) {
+        this.inventoryService = inventoryService;
+        this.medicineService = medicineService;
     }
 
-    private static <T> void print(List<T> list) {
-        if (list.isEmpty()) {
-            System.out.println("  (empty)");
+    public void startMenu() {
+        while (true) {
+            System.out.println("\n--- Inventory Menu ---");
+            System.out.println("1. Add Inventory Item");
+            System.out.println("2. List Inventory");
+            System.out.println("3. Find Item by ID (inventory id or medicine id)");
+            System.out.println("4. Reduce Stock");
+            System.out.println("5. Delete Item");
+            System.out.println("6. Low stock items");
+            System.out.println("0. Back");
+            System.out.print("Choose: ");
+            int ch = Integer.parseInt(scanner.nextLine());
+            switch (ch) {
+                case 1 -> addItem();
+                case 2 -> listAll();
+                case 3 -> findByIdOrMedicineId();
+                case 4 -> reduceStock();
+                case 5 -> deleteItem();
+                case 6 -> lowStock();
+                case 0 -> { return; }
+                default -> System.out.println("Invalid");
+            }
         }
-        for (T obj : list) {
-            System.out.println("  " + obj);
+    }
+
+    private void addItem() {
+        System.out.print("Enter medicine id: ");
+        int medId = Integer.parseInt(scanner.nextLine());
+        Medicine med = medicineService.getMedicineById(medId);
+        if (med == null) {
+            System.out.println("Medicine not found. Add medicine first.");
+            return;
         }
+
+        System.out.print("Quantity: ");
+        int qty = Integer.parseInt(scanner.nextLine());
+        System.out.print("Minimum stock limit: ");
+        int min = Integer.parseInt(scanner.nextLine());
+        System.out.print("Location: ");
+        String loc = scanner.nextLine();
+        System.out.print("Expiry date (YYYY-MM-DD): ");
+        LocalDate exp = LocalDate.parse(scanner.nextLine());
+        System.out.print("Price per unit: ");
+        double price = Double.parseDouble(scanner.nextLine());
+
+        InventoryItem item = new InventoryItem(0, qty, min, med, exp, loc, price);
+        Result<InventoryItem> res = inventoryService.addInventoryItem(item);
+        System.out.println(res.getMessage());
+
+        // --- print the generated inventory item id so pharmacist sees it immediately ---
+        if (res.isSuccess()) {
+            // since our service returns the saved InventoryItem in Result.data (we didn't earlier),
+            // we try to retrieve the item id by searching inventory by medicine and matching by lot properties.
+            // But easier & reliable: show the latest list entry(s) or the item object if returned by service.
+            // If your InventoryService.addInventoryItem returns the saved item, print it:
+            InventoryItem saved = res.getData(); // only works if service set it
+            if (saved != null) {
+                System.out.println("Inventory Item saved with id: " + saved.getItemId());
+            } else {
+                // fallback: show full inventory for this medicine (helpful)
+                System.out.println("Current inventory for this medicine:");
+                List<InventoryItem> list = inventoryService.findByMedicineId(medId);
+                list.forEach(System.out::println);
+            }
+        }
+    }
+
+    private void listAll() {
+        List<InventoryItem> list = inventoryService.getAllItems();
+        if (list.isEmpty()) System.out.println("(none)");
+        list.forEach(System.out::println);
+    }
+
+    private void findByIdOrMedicineId() {
+        System.out.print("Enter id (inventory item id or medicine id): ");
+        int id = Integer.parseInt(scanner.nextLine());
+
+        // Try find by inventory item id first
+        InventoryItem it = inventoryService.getItemById(id);
+        if (it != null) {
+            System.out.println(it);
+            return;
+        }
+
+        // Not an inventory item id — try as medicine id
+        List<InventoryItem> byMed = inventoryService.findByMedicineId(id);
+        if (byMed == null || byMed.isEmpty()) {
+            System.out.println("Not found");
+            return;
+        }
+        System.out.println("Inventory lots for medicine id " + id + ":");
+        byMed.forEach(System.out::println);
+    }
+
+    private void reduceStock() {
+        System.out.print("Enter inventory item id: ");
+        int id = Integer.parseInt(scanner.nextLine());
+        System.out.print("Amount to reduce: ");
+        int amt = Integer.parseInt(scanner.nextLine());
+        Result<Boolean> res = inventoryService.reduceStock(id, amt);
+        System.out.println(res.getMessage());
+    }
+
+    private void deleteItem() {
+        System.out.print("Enter id: ");
+        int id = Integer.parseInt(scanner.nextLine());
+        Result<Boolean> res = inventoryService.deleteItem(id);
+        System.out.println(res.getMessage());
+    }
+
+    private void lowStock() {
+        System.out.print("Threshold (e.g. 10): ");
+        int t = Integer.parseInt(scanner.nextLine());
+        List<InventoryItem> low = inventoryService.findLowStockItems(t);
+        if (low.isEmpty()) System.out.println("(none)");
+        low.forEach(System.out::println);
     }
 }
-
