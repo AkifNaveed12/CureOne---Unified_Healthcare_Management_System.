@@ -66,8 +66,8 @@ public class InventoryItem {
     }
 
     public String toString(){
-        return "Inventory\n1.Name= " +medicine.getName() +"\n2.Quantity= " +quantity
-                +"\n3.MinimumStockLimit= " +minimumStockLimit +"\n4.ItemId= " +itemId +"\n5.Price= "+ price +
-                "\n6.Location= " +location+"\n7.ExpiryDate= " +expiryDate;
+        return "(1.Name= " +medicine.getName() +", 2.Quantity= " +quantity
+                +", 3.MinimumStockLimit= " +minimumStockLimit +", 4.ItemId= " +itemId +", 5.Price= "+ price +
+                ", 6.Location= " +location+", 7.ExpiryDate= " +expiryDate + " )";
     }
 }

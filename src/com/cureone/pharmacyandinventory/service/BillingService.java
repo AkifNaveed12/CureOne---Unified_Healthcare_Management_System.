@@ -14,4 +14,5 @@ public interface BillingService {
     Invoice getInvoiceById(int id);
     Invoice getInvoiceByNumber(String invoiceNumber);
 
+
 }

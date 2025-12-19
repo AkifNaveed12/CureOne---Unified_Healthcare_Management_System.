@@ -9,6 +9,11 @@ public class Category {
     private int id;
 
     public Category() {}
+    public Category(int id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
     public Category(String name, String description, int id) {
         this.name = name;
         this.description = description;
@@ -38,6 +43,6 @@ public class Category {
 
     @Override
     public String toString() {
-        return "Category\n1.id= " +id + "\n2.name= " +name + "\n3.description= " +description;
+        return " ( 1.id= " +id + ", 2.name= " +name + ", 3.description= " +description + " )";
     }
 }

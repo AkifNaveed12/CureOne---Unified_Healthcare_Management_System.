@@ -27,7 +27,7 @@ public class InventoryServiceImpl implements InventoryServices{
             return new Result<>(false, "Invalid or Unknown Medicine. Please add medicine first");
         }
         if (item.getQuantity() < 0){
-            return new Result<>(false, "Quantity must be > 0 ");
+            return new Result<>(false, "Quantity must be >= 0 ");
         }
         inventoryRepo.save(item);
         return new Result<>(true, "Inventory Item Saved", item);

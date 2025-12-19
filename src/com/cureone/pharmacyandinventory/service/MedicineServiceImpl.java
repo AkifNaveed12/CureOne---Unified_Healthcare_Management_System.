@@ -15,7 +15,7 @@ public class MedicineServiceImpl implements MedicineService {
         this.repository = repository;
     }
     @Override
-    public Result addMedicine(Medicine medicine) {
+    public Result<Medicine> addMedicine(Medicine medicine) {
         if(medicine == null)
             return new Result<>(false, "Medicine is null");
         if(medicine.getName() == null || medicine.getName().trim().isEmpty()){

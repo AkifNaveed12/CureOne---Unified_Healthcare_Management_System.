@@ -66,7 +66,7 @@ public class Medicine {
     }
 
     public String toString(){
-        return "Medicine\n1.Name=" +name+ "\n2.id=" +id+ "\n3.Category=" +category+ "\n4.Price=" +price+
-                "\n5.Quantity=" +quantity+ "\n6.ExpiryDate=" +expiryDate+"\n7.Manufacturer=" +manufacturer;
+        return "( 1.Name=" +name+ ", 2.id=" +id+ ", 3.Category=" +category+ ", 4.Price=" +price+
+                ", 5.Quantity=" +quantity+ ", 6.ExpiryDate=" +expiryDate+", 7.Manufacturer=" +manufacturer +" )";
     }
 }
