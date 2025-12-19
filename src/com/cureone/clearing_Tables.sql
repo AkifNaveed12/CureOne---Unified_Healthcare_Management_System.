@@ -1,0 +1,11 @@
+USE cureone_db;
+SET FOREIGN_KEY_CHECKS = 0;
+
+TRUNCATE TABLE appointments;
+TRUNCATE TABLE inventory_items;
+TRUNCATE TABLE medicines;
+TRUNCATE TABLE categories;
+TRUNCATE TABLE patients;
+TRUNCATE TABLE doctors;
+
+SET FOREIGN_KEY_CHECKS = 1;

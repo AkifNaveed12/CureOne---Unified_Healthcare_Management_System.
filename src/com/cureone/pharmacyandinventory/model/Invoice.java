@@ -14,6 +14,9 @@ public class Invoice {
     private double totalAmount;
     private String notes;
 
+    private int patientId;
+
+
     public Invoice() {}
 
     public Invoice(int id, String invoiceNumber, String customerName, int pharmacistId, LocalDateTime createdAt, List<CartItem> items, double totalAmount, String notes) {
@@ -25,6 +28,12 @@ public class Invoice {
         this.items = items;
         this.totalAmount = totalAmount;
         this.notes = notes;
+    }
+    public int getPatientId() {
+        return patientId;
+    }
+    public void setPatientId(int patientId) {
+        this.patientId = patientId;
     }
 
     public int getId() { return id; }

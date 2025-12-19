@@ -78,8 +78,8 @@ public class BillingServiceImpl implements BillingService {
         // 3. Create invoice
         Invoice invObj = new Invoice();
         invObj.setInvoiceNumber("INV-" + System.currentTimeMillis());
-        invObj.setCustomerName(customerName == null ? "Walk-in" : customerName);
         invObj.setPharmacistId(pharmacistId);
+        invObj.setPatientId(0);
         invObj.setCreatedAt(LocalDateTime.now());
         invObj.setItems(new ArrayList<>(cart.getItems()));
         invObj.setTotalAmount(cart.getTotal());
@@ -108,5 +108,6 @@ public class BillingServiceImpl implements BillingService {
         }
         return null;
     }
+
 
 }

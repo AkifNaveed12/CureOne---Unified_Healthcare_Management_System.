@@ -12,12 +12,13 @@ import java.util.Scanner;
 public class MedicineController {
 
     private final MedicineService service;
-    private final List<Category> categories;
+    private final CategoryController categoryController;
     private final Scanner scanner = new Scanner(System.in);
 
-    public MedicineController(MedicineService service, List<Category> categories) {
+    public MedicineController(MedicineService service,
+                              CategoryController categoryController) {
         this.service = service;
-        this.categories = categories;
+        this.categoryController = categoryController;
     }
 
     public void startMenu() {
@@ -30,9 +31,11 @@ public class MedicineController {
             System.out.println("5. Update Medicine");
             System.out.println("6. Delete Medicine");
             System.out.println("7. Expired Medicines");
-            System.out.println("0. Back to main");
+            System.out.println("0. Back");
             System.out.print("Choose: ");
+
             int choice = Integer.parseInt(scanner.nextLine());
+
             switch (choice) {
                 case 1 -> addMedicine();
                 case 2 -> listAll();
@@ -48,6 +51,13 @@ public class MedicineController {
     }
 
     private void addMedicine() {
+        List<Category> categories = categoryController.getCategories();
+
+        if (categories.isEmpty()) {
+            System.out.println("No categories found. Please add categories first.");
+            return;
+        }
+
         System.out.print("Name: ");
         String name = scanner.nextLine();
         System.out.print("Manufacturer: ");
@@ -57,48 +67,52 @@ public class MedicineController {
         System.out.print("Quantity: ");
         int qty = Integer.parseInt(scanner.nextLine());
 
-        // Pharmacist has to choose from the categories defined here
-        System.out.println("Choose category id from list below:");
-        for (Category c : categories) {
-            System.out.println(c.getId() + ". " + c.getName());
-        }
-        System.out.print("Category id: ");
+        System.out.println("Choose category id:");
+        categories.forEach(c ->
+                System.out.println(c.getId() + ". " + c.getName())
+        );
+
         int catId = Integer.parseInt(scanner.nextLine());
-        Category chosen = categories.stream().filter(c -> c.getId() == catId).findFirst().orElse(null);
-        // logic ****
-//        Category chosen = null;
-//        for (Category c : categories) {
-//            if (c.getId() == catId) { chosen = c; break; }
-//        }
+        Category chosen = categories.stream()
+                .filter(c -> c.getId() == catId)
+                .findFirst()
+                .orElse(null);
 
+        if (chosen == null) {
+            System.out.println("Invalid category.");
+            return;
+        }
 
-        System.out.print("Expiry date (YYYY-MM-DD): ");
-        LocalDate expiry = LocalDate.parse(scanner.nextLine());
+        LocalDate expiry;
+        try {
+            System.out.print("Expiry date (YYYY-MM-DD): ");
+            expiry = LocalDate.parse(scanner.nextLine());
+        } catch (Exception e) {
+            System.out.println("Invalid date format. Use YYYY-MM-DD");
+            return;
+        }
 
         Medicine m = new Medicine(0, name, manufacturer, expiry, price, chosen, qty);
         Result<Medicine> res = service.addMedicine(m);
         System.out.println(res.getMessage());
-        if (res.isSuccess()) System.out.println(res.getData());
     }
 
     private void listAll() {
         List<Medicine> list = service.getAllMedicines();
         if (list.isEmpty()) System.out.println("(no medicines)");
-        list.forEach(System.out::println);// iterates through the list and prints line by line
+        list.forEach(System.out::println);
     }
 
     private void findById() {
         System.out.print("Enter id: ");
         int id = Integer.parseInt(scanner.nextLine());
         Medicine m = service.getMedicineById(id);
-        if (m == null) System.out.println("Not found");
-        else System.out.println(m);
+        System.out.println(m == null ? "Not found" : m);
     }
 
     private void searchByName() {
         System.out.print("Enter name: ");
-        String name = scanner.nextLine();
-        List<Medicine> list = service.searchByName(name);
+        List<Medicine> list = service.searchByName(scanner.nextLine());
         if (list.isEmpty()) System.out.println("(none)");
         list.forEach(System.out::println);
     }
@@ -107,37 +121,17 @@ public class MedicineController {
         System.out.print("Enter id to update: ");
         int id = Integer.parseInt(scanner.nextLine());
         Medicine existing = service.getMedicineById(id);
-        if (existing == null) { System.out.println("Not found"); return; }
+        if (existing == null) return;
 
-        System.out.print("New name (" + existing.getName() + "): ");
-        String name = scanner.nextLine();
-        if (!name.trim().isEmpty()) existing.setName(name);
-
-        System.out.print("New manufacturer (" + existing.getManufacturer() + "): ");
-        String man = scanner.nextLine();
-        if (!man.trim().isEmpty()) existing.setManufacturer(man);
-
-        System.out.print("New price (" + existing.getPrice() + "): ");
-        String priceStr = scanner.nextLine();
-        if (!priceStr.trim().isEmpty()) existing.setPrice(Double.parseDouble(priceStr));
-
-        System.out.print("New quantity (" + existing.getQuantity() + "): ");
-        String qtyStr = scanner.nextLine();
-        if (!qtyStr.trim().isEmpty()) existing.setQuantity(Integer.parseInt(qtyStr));
-
-        System.out.print("New expiry (" + existing.getExpiryDate() + "): ");
-        String expStr = scanner.nextLine();
-        if (!expStr.trim().isEmpty()) existing.setExpiryDate(LocalDate.parse(expStr));
-
-        Result<Medicine> res = service.updateMedicine(existing);
-        System.out.println(res.getMessage());
+        System.out.print("New price: ");
+        existing.setPrice(Double.parseDouble(scanner.nextLine()));
+        System.out.println(service.updateMedicine(existing).getMessage());
     }
 
     private void deleteMedicine() {
         System.out.print("Enter id: ");
-        int id = Integer.parseInt(scanner.nextLine());
-        Result<Boolean> res = service.deleteMedicine(id);
-        System.out.println(res.getMessage());
+        System.out.println(service.deleteMedicine(
+                Integer.parseInt(scanner.nextLine())).getMessage());
     }
 
     private void showExpired() {

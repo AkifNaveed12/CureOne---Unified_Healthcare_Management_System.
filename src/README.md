@@ -1,119 +1,416 @@
-CureOne – Unified Healthcare Management System
-Overview
+🏥 CureOne – Unified Healthcare Management System
 
-CureOne is a modular healthcare management system designed to unify pharmacy inventory, appointment scheduling, patient records, and user authentication with billing. It is implemented in Java using OOP principles and stores data using arrays or text files. The system is structured for clarity, maintainability, and modular collaboration among team members.
+CureOne is a Java-based desktop healthcare management system built using Swing, JDBC, and MySQL.
+It provides a role-based unified platform for managing doctors, patients, appointments, pharmacy inventory, billing, and medical records.
 
+🚀 Features Overview
+👤 Role-Based Access
+
+Each user logs in with a role and is redirected to a dedicated dashboard:
+
+Admin – Full system control
+
+Doctor – Appointments & medical records
+
+Patient – Book appointments & manage profile
+
+Pharmacist – Inventory & billing
+
+Customer – Browse pharmacy (no login required)
+
+🧱 System Architecture
+
+CureOne follows a Layered (MVC-inspired) Architecture:
+
+GUI Layer (Swing)
+│
+├── Service Layer (Business Logic)
+│
+├── Repository Layer (JDBC / SQL)
+│
+└── MySQL Database
+
+Architecture Responsibilities
+Layer	Responsibility
+GUI	User interaction & dashboards
+Service	Validation, business rules
+Repository	Database access via JDBC
+Database	Persistent data storage
+🗂️ Project Structure
+com.cureone
+│
+├── auth
+│   ├── User, AuthService
+│   ├── UserRepository, JdbcUserRepository
+│
+├── gui
+│   ├── MainFrame, GUIContext
+│   ├── dashboards (Admin, Doctor, Patient, Pharmacist)
+│   ├── panels (AppointmentPanel, PatientPanel, etc.)
+│
+├── appointmentsandscheduling
+│   ├── model (Appointment, Doctor)
+│   ├── service (AppointmentService, DoctorService)
+│   ├── repository (JDBC Repositories)
+│
+├── patientsandrecords
+│   ├── model (Patient)
+│   ├── service (PatientService)
+│   ├── repository (JdbcPatientRepository)
+│
+├── pharmacyandinventory
+│   ├── medicines, stock, billing
+│
+├── common
+│   ├── DBUtil, Result
+│
+└── Main.java
+
+🔐 Authentication & User Linking
+🔑 Users Table
+
+All system users are stored in a single table:
+
+users (
+id,
+username,
+password_hash,
+role,
+linked_id
+)
+
+🔗 linked_id Concept (CORE DESIGN)
+
+linked_id connects a user to a domain entity
+
+Example:
+
+Doctor user → linked_id = doctors.id
+
+Patient user → linked_id = patients.id
+
+This allows:
+
+One login system
+
+Clean role separation
+
+Zero duplication of user logic
+
+🧑‍⚕️ Doctor Module
+Doctor Capabilities
+
+View assigned appointments
+
+View patient medical history
+
+Access records securely
+
+Doctor Resolution Logic
+int doctorId = loggedInUser.getLinkedId();
+Doctor d = doctorService.getDoctorById(doctorId);
+
+🧑‍🦱 Patient Module
+Patient Capabilities
+
+Book appointments
+
+View appointment history
+
+Update profile
+
+View medical records
+
+Patient Resolution Logic
+int patientId = loggedInUser.getLinkedId();
+Patient p = patientService.getPatientById(patientId);
+
+📅 Appointment Management
+
+Centralized scheduling system
+
+Role-aware access:
+
+Doctor → appointments assigned to doctor
+
+Patient → own appointments
+
+Status tracking: Pending, Approved, Completed
+
+💊 Pharmacy & Inventory
 Features
 
-Pharmacy & Inventory – Manage medicines, categories, and inventory items.
+Medicine catalog
 
-Appointments & Scheduling – Schedule, update, and cancel patient appointments with doctors.
+Stock management
 
-Patients & Records – Register patients and maintain their medical history and records.
+Invoice & billing system
 
-Users & Authentication – Manage users, roles, and login functionality.
+Customer checkout
 
-Billing & Reports – Generate invoices and track payments (module integrated with pharmacy).
+🧠 GUI Context (Shared State)
 
-Project Architecture
-Package Structure
-com.cureone
-├─ pharmacyinventory (Akif)
-│    ├─ model
-│    ├─ service
-│    ├─ controller
-│    └─ repository
-├─ appointments (Haider)
-│    ├─ model
-│    ├─ service
-│    ├─ controller
-│    └─ repository
-├─ patients (Hamza)
-│    ├─ model
-│    ├─ service
-│    ├─ controller
-│    └─ repository
-└─ users (Hammad)
-├    |─ model
-├    |─ service
-├    |─ controller
-└    |─ repository
-└─ common
-└    |─ Result<T>
+GUIContext acts as a central registry:
 
-Example Classes
-Module	Model Classes	Service Classes	Repository Classes	Controller Classes
-Pharmacy & Inventory	Medicine, InventoryItem, Category	MedicineService, InventoryService	MedicineRepository, InventoryRepository	MedicineController, InventoryController
-Appointments & Scheduling	Appointment, Doctor, Timeslot	AppointmentService	AppointmentRepository	AppointmentController
-Patients & Records	Patient, MedicalRecord	PatientService	PatientRepository	PatientController
-Users & Authentication	User, Role, Invoice	UserService, BillingService	UserRepository, BillingRepository	UserController, BillingController
-Workflow Overview
-
-Controller – Receives input from the user/UI.
-
-Service – Validates and processes data according to business rules.
-
-Repository – Stores and retrieves data from arrays or text files.
-
-Model – Represents actual data objects.
-
-Result<T> – Utility class used to return operation outcomes (success/failure and messages).
-
-Example Flow:
-
-User → Controller → Service → Repository → Model → Result<T> → Service → Controller → User
-
-How to Run the Project
-
-Clone Repository
-
-git clone <your-repo-url>
-cd CureOne
+public class GUIContext {
+public static User loggedInUser;
+public static AuthService authService;
+public static DoctorService doctorService;
+public static PatientService patientService;
+...
+}
 
 
-Open in IntelliJ IDEA
+Purpose:
 
-Open existing project from folder
+Share services
 
-Make sure Git is enabled in IntelliJ
+Track logged-in user
 
-Compile & Run
+Avoid tight coupling between screens
 
-Use Main.java (or module-specific runners for testing)
+🗄️ Database Design
+Core Tables
 
-Execute via IntelliJ or terminal
+users
 
-Branching & Collaboration
+doctors
 
-Each team member works on their module branch:
+patients
 
-git checkout -b feature/<module-name>
+appointments
+
+medical_records
+
+medicines
+
+inventory_items
+
+invoices
+
+Relational integrity maintained using foreign keys & linked IDs.
+
+🛠️ Technologies Used
+Technology	Purpose
+Java (JDK 17+)	Core language
+Swing	Desktop GUI
+JDBC	Database connectivity
+MySQL	Relational database
+IntelliJ IDEA	Development
+MVC Pattern	Clean architecture
+▶️ How to Run
+
+Clone repository
+
+Import project in IntelliJ
+
+Configure MySQL and update DBUtil
+
+Add MySQL Connector JAR
+
+Run Main.java
+
+📌 Highlights
+
+Clean separation of concerns
+
+Role-based dashboards
+
+Central authentication
+
+Scalable architecture
+
+Academic + real-world design
 
 
-Commit changes and push:
+📐 Diagrams & Design – CureOne
+🧱 1. System Architecture Diagram
+High-Level Architecture (Layered Design)
++--------------------------------------------------+
+|                  GUI LAYER                       |
+|--------------------------------------------------|
+|  LoginPanel | Dashboards | Panels | Forms        |
+|  (Swing UI)                                       |
++------------------------▲-------------------------+
+|
+|
++------------------------|-------------------------+
+|               SERVICE LAYER                      |
+|--------------------------------------------------|
+| AuthService | DoctorService | PatientService     |
+| AppointmentService | Pharmacy | Billing          |
+| (Business Logic, Validation)                     |
++------------------------▲-------------------------+
+|
+|
++------------------------|-------------------------+
+|            REPOSITORY / DAO LAYER                |
+|--------------------------------------------------|
+| JdbcUserRepository | JdbcDoctorRepository        |
+| JdbcPatientRepository | AppointmentRepository   |
+| InventoryRepository | InvoiceRepository         |
+| (JDBC + SQL Queries)                             |
++------------------------▲-------------------------+
+|
+|
++------------------------|-------------------------+
+|                 DATABASE LAYER                   |
+|--------------------------------------------------|
+| MySQL (users, doctors, patients, appointments,  |
+| medical_records, medicines, inventory, invoices)|
++--------------------------------------------------+
 
-git add .
-git commit -m "Implemented skeleton of module X"
-git push origin feature/<module-name>
+Why This Architecture?
 
-Future Enhancements
+✅ Clean separation of concerns
 
-Integrate database support (MySQL/PostgreSQL) instead of arrays/text files.
+✅ Easy debugging & maintenance
 
-Add GUI interface (Swing/JavaFX).
+✅ Real-world enterprise style
 
-Implement encryption & secure authentication.
+✅ Scalable for future features
 
-Generate PDF/Excel reports for billing and inventory.
+🔄 2. Authentication & Role Flow Diagram
+Login → Role Resolution → Dashboard Routing
+User
+│
+│  enters username & password
+▼
+LoginPanel
+│
+│ calls
+▼
+AuthService.login()
+│
+│ fetch user from DB
+▼
+UserRepository (users table)
+│
+│ returns User(id, role, linked_id)
+▼
+GUIContext.loggedInUser
+│
+│ role-based routing
+▼
+MainFrame
+├── ADMIN       → AdminDashboard
+├── DOCTOR      → DoctorDashboard
+├── PATIENT     → PatientDashboard
+├── PHARMACIST  → PharmacistDashboard
+└── CUSTOMER    → CustomerDashboard
 
-Add REST APIs for integration with external applications.
+🔗 linked_id Concept (Critical)
+users
+├── id
+├── role
+└── linked_id
+│
+├── doctors.id   (if role = DOCTOR)
+└── patients.id  (if role = PATIENT)
 
-Contributors
 
-Akif Naveed Malik – Pharmacy & Inventory Module
+✔ Single login system
+✔ Zero duplication
+✔ Clean mapping between users & domain entities
 
-Haider – Appointments & Scheduling Module
+🗄️ 3. ER Diagram (Database Design)
+Entity Relationship Diagram 
++---------+        +-------------+
+|  users  |        |   doctors   |
++---------+        +-------------+
+| id (PK) |◄───────| id (PK)     |
+| username|        | name        |
+| password|        | specialization
+| role    |        | phone       |
+| linked_id ───────► user_id (FK)
++---------+        | email       |
++-------------+
 
-Hamza – Patients & Records Module
++---------+        +-------------+
+|  users  |        |  patients   |
++---------+        +-------------+
+| id (PK) |◄───────| id (PK)     |
+| role    |        | name        |
+| linked_id ───────► age         |
++---------+        | gender      |
+| contact     |
+| disease     |
++-------------+
 
-Hammad – Users, Authentication & Billing Module
++----------------+      +----------------+
+|  appointments  |◄────►|   doctors     |
++----------------+      +----------------+
+| id (PK)        |      | id (PK)        |
+| doctor_id (FK) |      +----------------+
+| patient_id(FK) |
+| date           |◄────►+----------------+
+| time           |      |   patients     |
+| status         |      | id (PK)        |
+| reason         |      +----------------+
++----------------+
+
++-------------------+
+| medical_records   |
++-------------------+
+| id (PK)           |
+| appointment_id(FK)|
+| diagnosis         |
+| notes             |
++-------------------+
+
++------------------+     +-------------------+
+| medicines        |◄───►| inventory_items  |
++------------------+     +-------------------+
+| id (PK)          |     | id (PK)           |
+| name             |     | medicine_id (FK)  |
+| category_id(FK)  |     | quantity          |
+| price            |     | expiry_date       |
++------------------+     +-------------------+
+
++------------------+     +------------------+
+| invoices         |◄───►| invoice_items   |
++------------------+     +------------------+
+| id (PK)          |     | id (PK)          |
+| pharmacist_id    |     | invoice_id (FK) |
+| customer_name    |     | medicine_id(FK) |
+| total_amount     |     | quantity        |
+| created_at       |     | line_total      |
++------------------+     +------------------+
+
+🧠 Design Decisions 
+
+Single users table for authentication
+
+linked_id avoids duplicating user data
+
+Domain tables (doctors, patients) stay clean
+
+Appointments act as a central junction
+
+Inventory & billing are modular and independent
+
+📌 Why This Project Stands Out
+
+✔ Real-world healthcare workflow
+
+✔ Proper role-based access control
+
+✔ Clean JDBC usage (no ORM magic)
+
+✔ GUI + backend fully integrated
+
+✔ University + industry-ready design
+
+
+👨‍💻 Author
+
+Akif
+Software Engineering Student
+Project: CureOne – Unified Healthcare Management System
+
+
+
+LinkedIn  : https://www.linkedin.com/in/akif-naveed-malik30
+Email     : hello.akif_naveed@gmail.com
+Youtube   : https://youtube.com/@notestocode?si=eO0qF54cpBgT8iNv
+Instagram : https://www.instagram.com/notestocode?igsh=MWxqOG91bmtka3dwbg==
