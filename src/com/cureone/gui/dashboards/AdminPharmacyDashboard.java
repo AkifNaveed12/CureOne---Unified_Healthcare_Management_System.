@@ -96,10 +96,24 @@ public class AdminPharmacyDashboard extends JPanel {
                         frame
                 ))
         );
-        backBtn.addActionListener(e ->
-                frame.showScreen(MainFrame.ADMIN)
-        );
+//        backBtn.addActionListener(e ->
+//                frame.showScreen(MainFrame.ADMIN)
+//        );
 
+        backBtn.addActionListener(e -> {
+            Container c = getParent();
+            while (c != null && !(c instanceof AdminDashboard)) {
+                c = c.getParent();
+            }
+            if (c instanceof AdminDashboard ad) {
+                ad.showHome();
+            }
+        });
+
+
+        //    temp change
+        setFocusable(true);
+        requestFocusInWindow();
     }
 
     // ================= HELPERS =================
@@ -117,5 +131,9 @@ public class AdminPharmacyDashboard extends JPanel {
         contentPanel.add(panel, BorderLayout.CENTER);
         contentPanel.revalidate();
         contentPanel.repaint();
+
+        //    temp change
+        panel.setFocusable(true);
+        panel.requestFocusInWindow();
     }
 }

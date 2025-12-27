@@ -54,7 +54,11 @@ public class BillingManagementPanel extends JPanel {
 
         searchBtn.addActionListener(e -> search());
         refreshBtn.addActionListener(e -> loadAll());
-        backBtn.addActionListener(e -> frame.showScreen(MainFrame.ADMIN));
+        //backBtn.addActionListener(e -> frame.showScreen(MainFrame.ADMIN));
+        // ===== START FIX =====
+        backBtn.addActionListener(e -> handleBack());
+// ===== END FIX =====
+
 
         actions.add(new JLabel("Invoice No:"));
         actions.add(searchField);
@@ -142,4 +146,21 @@ public class BillingManagementPanel extends JPanel {
                 i.getTotalAmount()
         });
     }
+    // ================= BACK HANDLER =================
+    private void handleBack() {
+        Container c = this.getParent();
+
+        while (c != null) {
+            if (c instanceof com.cureone.gui.dashboards.PharmacistDashboard p) {
+                p.showHome();
+                return;
+            }
+            if (c instanceof com.cureone.gui.dashboards.AdminDashboard a) {
+                a.showHome();
+                return;
+            }
+            c = c.getParent();
+        }
+    }
+
 }

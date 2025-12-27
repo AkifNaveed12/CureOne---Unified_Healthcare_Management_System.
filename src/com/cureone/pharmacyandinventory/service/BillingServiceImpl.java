@@ -75,6 +75,15 @@ public class BillingServiceImpl implements BillingService {
                 remaining -= reduce;
             }
         }
+        // 🔧 SYNC medicine quantity AFTER inventory deduction
+        for (CartItem ci : cart.getItems()) {
+            int remaining = 0;
+            List<InventoryItem> inv = inventoryRepo.findByMedicineId(ci.getMedicineId());
+            for (InventoryItem it : inv) remaining += it.getQuantity();
+
+            medicineRepo.updateQuantity(ci.getMedicineId(), remaining);
+        }
+
         // 3. Create invoice
         Invoice invObj = new Invoice();
         invObj.setInvoiceNumber("INV-" + System.currentTimeMillis());

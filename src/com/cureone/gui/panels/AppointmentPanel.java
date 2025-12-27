@@ -1,8 +1,12 @@
 package com.cureone.gui.panels;
 
 import com.cureone.appointmentsandscheduling.model.Appointment;
+import com.cureone.appointmentsandscheduling.model.Doctor;
 import com.cureone.appointmentsandscheduling.service.AppointmentService;
 import com.cureone.gui.MainFrame;
+import com.cureone.gui.dashboards.AdminDashboard;
+import com.cureone.gui.dashboards.DoctorDashboard;
+import com.cureone.gui.dashboards.PatientDashboard;
 import com.cureone.gui.util.NavigationUtil;
 
 import javax.swing.*;
@@ -72,10 +76,10 @@ public class AppointmentPanel extends JPanel {
         refresh.addActionListener(e -> loadData());
 
         JButton back = new JButton("Back");
-        back.addActionListener(e ->
-                NavigationUtil.goBack(frame, role, userId)
-        );
-
+        back.addActionListener(e -> handleBack());
+//        back.addActionListener(e ->
+//                NavigationUtil.goBack(frame, role, userId)
+//        );
         top.add(title);
         top.add(refresh);
 
@@ -228,4 +232,26 @@ public class AppointmentPanel extends JPanel {
                 JOptionPane.ERROR_MESSAGE
         );
     }
+
+    // ================= BACK HANDLER =================
+    private void handleBack() {
+        Container c = this.getParent();
+
+        while (c != null) {
+            if (c instanceof AdminDashboard a) {
+                a.showHome();
+                return;
+            }
+            if (c instanceof DoctorDashboard d) {
+                d.showHome();
+                return;
+            }
+            if (c instanceof PatientDashboard p) {
+                p.showHome();
+                return;
+            }
+            c = c.getParent();
+        }
+    }
+
 }

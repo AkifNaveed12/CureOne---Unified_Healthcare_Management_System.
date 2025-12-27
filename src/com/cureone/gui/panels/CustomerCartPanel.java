@@ -15,6 +15,7 @@ public class CustomerCartPanel extends JPanel {
     private final Cart cart;
     private JTable table;
     private DefaultTableModel model;
+    private JLabel totalLabel;
 
     public CustomerCartPanel(Cart cart) {
         this.cart = cart;
@@ -39,10 +40,9 @@ public class CustomerCartPanel extends JPanel {
 
     private JPanel buildBottom() {
         JPanel bottom = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        totalLabel = new JLabel("Total: 0.0");
 
-        JLabel totalLabel = new JLabel("Total: 0.0");
         JButton checkoutBtn = new JButton("Checkout");
-
         checkoutBtn.addActionListener(e -> checkout());
 
         bottom.add(totalLabel);
@@ -64,6 +64,7 @@ public class CustomerCartPanel extends JPanel {
                     item.lineTotal()
             });
         }
+        totalLabel.setText("Total: " + cart.getTotal());
     }
 
     private void checkout() {

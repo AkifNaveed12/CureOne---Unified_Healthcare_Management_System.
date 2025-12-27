@@ -1,5 +1,6 @@
 package com.cureone.gui.panels;
 
+import com.cureone.gui.dashboards.AdminDashboard;
 import com.cureone.pharmacyandinventory.model.Category;
 import com.cureone.pharmacyandinventory.service.CategoryService;
 
@@ -38,6 +39,7 @@ public class CategoryManagementPanel extends JPanel {
         JButton updateBtn = new JButton("Update");
         JButton deleteBtn = new JButton("Delete");
         JButton refreshBtn = new JButton("Refresh");
+        JButton backBtn = new JButton("Back");
 
         p.add(new JLabel("Name:"));
         p.add(search);
@@ -46,12 +48,17 @@ public class CategoryManagementPanel extends JPanel {
         p.add(updateBtn);
         p.add(deleteBtn);
         p.add(refreshBtn);
+        p.add(backBtn);
 
         searchBtn.addActionListener(e -> search());
         addBtn.addActionListener(e -> addCategory());
         updateBtn.addActionListener(e -> updateCategory());
         deleteBtn.addActionListener(e -> deleteCategory());
         refreshBtn.addActionListener(e -> loadAll());
+        backBtn.addActionListener(e -> handleBack());
+
+
+
 
         return p;
     }
@@ -172,4 +179,17 @@ public class CategoryManagementPanel extends JPanel {
         }
         return null;
     }
+    // ================= BACK HANDLER =================
+    private void handleBack() {
+        Container c = this.getParent();
+
+        while (c != null) {
+            if (c instanceof AdminDashboard ad) {
+                ad.showHome();
+                return;
+            }
+            c = c.getParent();
+        }
+    }
+
 }

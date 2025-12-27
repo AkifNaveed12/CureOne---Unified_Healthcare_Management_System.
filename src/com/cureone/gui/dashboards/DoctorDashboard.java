@@ -56,6 +56,10 @@ public class DoctorDashboard extends JPanel {
             GUIContext.logout();
             frame.showScreen(MainFrame.LOGIN);
         });
+
+        //    temp change
+        setFocusable(true);
+        requestFocusInWindow();
     }
 
     private JButton createBtn(String text) {
@@ -72,6 +76,10 @@ public class DoctorDashboard extends JPanel {
         contentPanel.add(c, BorderLayout.CENTER);
         contentPanel.revalidate();
         contentPanel.repaint();
+
+        //    temp change
+        c.setFocusable(true);
+        c.requestFocusInWindow();
     }
 
     // ===== CORE FIX (USES linkedId ONLY) =====
@@ -127,5 +135,20 @@ public class DoctorDashboard extends JPanel {
         }
 
         switchPanel(new JScrollPane(area));
+
+    }
+// ------------testing fix navigation----------
+    public void showHome() {
+        contentPanel.removeAll();
+
+        JLabel welcome = new JLabel(
+                "Welcome Doctor – Select an option",
+                SwingConstants.CENTER
+        );
+        welcome.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+
+        contentPanel.add(welcome, BorderLayout.CENTER);
+        contentPanel.revalidate();
+        contentPanel.repaint();
     }
 }

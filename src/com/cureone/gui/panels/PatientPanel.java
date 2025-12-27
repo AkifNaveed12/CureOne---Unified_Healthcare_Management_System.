@@ -1,5 +1,6 @@
 package com.cureone.gui.panels;
 
+import com.cureone.gui.dashboards.PatientDashboard;
 import com.cureone.patientsandrecords.model.Patient;
 import com.cureone.patientsandrecords.service.PatientService;
 import com.cureone.gui.MainFrame;
@@ -61,9 +62,12 @@ public class PatientPanel extends JPanel {
         refresh.addActionListener(e -> loadData());
 
         JButton back = new JButton("Back");
-        back.addActionListener(e ->
-                NavigationUtil.goBack(frame, role, userId)
-        );
+        back.addActionListener(e -> handleBack());
+//        back.addActionListener(e ->
+//                NavigationUtil.goBack(frame, role, userId)
+//        );
+
+
 
         top.add(title);
         top.add(refresh);
@@ -157,4 +161,21 @@ public class PatientPanel extends JPanel {
                 JOptionPane.ERROR_MESSAGE
         );
     }
+    // ================= BACK HANDLER =================
+    private void handleBack() {
+        Container c = this.getParent();
+
+        while (c != null) {
+            if (c instanceof com.cureone.gui.dashboards.AdminDashboard a) {
+                a.showHome();
+                return;
+            }
+            if (c instanceof PatientDashboard p) {
+                p.showHome();
+                return;
+            }
+            c = c.getParent();
+        }
+    }
+
 }

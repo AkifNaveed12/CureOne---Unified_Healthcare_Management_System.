@@ -21,4 +21,5 @@ public interface MedicineRepository {
     List<Medicine> findByName(String name);
 
     List<Medicine> findExpiredMedicines();
+    public void updateQuantity(int medicineId, int qty);
 }

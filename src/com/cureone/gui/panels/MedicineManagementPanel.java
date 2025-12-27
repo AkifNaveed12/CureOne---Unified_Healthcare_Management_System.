@@ -2,6 +2,7 @@ package com.cureone.gui.panels;
 
 import com.cureone.gui.GUIContext;
 import com.cureone.gui.MainFrame;
+import com.cureone.gui.dashboards.AdminDashboard;
 import com.cureone.pharmacyandinventory.model.Category;
 import com.cureone.pharmacyandinventory.model.Medicine;
 import com.cureone.pharmacyandinventory.service.MedicineService;
@@ -62,7 +63,17 @@ public class MedicineManagementPanel extends JPanel {
         editBtn.addActionListener(e -> editMedicine());
         deleteBtn.addActionListener(e -> deleteMedicine());
         refreshBtn.addActionListener(e -> loadAll());
-        backBtn.addActionListener(e -> frame.showScreen(MainFrame.ADMIN));
+        //backBtn.addActionListener(e -> frame.showScreen(MainFrame.ADMIN));
+        backBtn.addActionListener(e -> {
+            Container c = getParent();
+            while (c != null && !(c instanceof AdminDashboard)) {
+                c = c.getParent();
+            }
+            if (c instanceof AdminDashboard ad) {
+                ad.showHome();
+            }
+        });
+
 
         actions.add(new JLabel("Name:"));
         actions.add(searchField);

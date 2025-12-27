@@ -2,6 +2,7 @@ package com.cureone.gui.panels;
 
 import com.cureone.common.Result;
 import com.cureone.gui.GUIContext;
+import com.cureone.gui.dashboards.CustomerDashboard;
 import com.cureone.pharmacyandinventory.model.Cart;
 import com.cureone.pharmacyandinventory.model.Medicine;
 import com.cureone.pharmacyandinventory.service.MedicineService;
@@ -38,14 +39,18 @@ public class CustomerMedicinePanel extends JPanel {
         searchField = new JTextField(15);
         JButton searchBtn = new JButton("Search");
         JButton addBtn = new JButton("Add to Cart");
+        JButton backBtn = new JButton("Back");
 
         searchBtn.addActionListener(ev -> search());
         addBtn.addActionListener(ev -> addToCart());
+        backBtn.addActionListener(e -> handleBack());
+
 
         top.add(new JLabel("Medicine Name:"));
         top.add(searchField);
         top.add(searchBtn);
         top.add(addBtn);
+        top.add(backBtn);
 
         return top;
     }
@@ -126,4 +131,17 @@ public class CustomerMedicinePanel extends JPanel {
 
         JOptionPane.showMessageDialog(this, "Added to cart");
     }
+    // ================= BACK HANDLER =================
+    private void handleBack() {
+        Container c = this.getParent();
+
+        while (c != null) {
+            if (c instanceof CustomerDashboard cd) {
+                cd.showHome();
+                return;
+            }
+            c = c.getParent();
+        }
+    }
+
 }

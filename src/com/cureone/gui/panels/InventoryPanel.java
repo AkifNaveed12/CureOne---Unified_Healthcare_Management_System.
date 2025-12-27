@@ -1,10 +1,12 @@
 package com.cureone.gui.panels;
 
 import com.cureone.gui.MainFrame;
+import com.cureone.gui.dashboards.AdminDashboard;
 import com.cureone.gui.util.NavigationUtil;
 import com.cureone.pharmacyandinventory.model.InventoryItem;
 import com.cureone.pharmacyandinventory.service.InventoryServices;
 
+import javax.management.relation.Role;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
@@ -48,9 +50,12 @@ public class InventoryPanel extends JPanel {
 
         search.addActionListener(e -> search());
         refresh.addActionListener(e -> loadAll());
-        back.addActionListener(e ->
-                NavigationUtil.goBack(frame, role, userId)
-        );
+        back.addActionListener(e -> handleBack());
+
+//        back.addActionListener(e ->
+//                NavigationUtil.goBack(frame, role, userId)
+//        );
+
 
         right.add(new JLabel("Medicine:"));
         right.add(searchField);
@@ -108,4 +113,22 @@ public class InventoryPanel extends JPanel {
             }
         }
     }
+    // ================= BACK HANDLER =================
+    private void handleBack() {
+        Container c = this.getParent();
+
+        while (c != null) {
+            if (c instanceof com.cureone.gui.dashboards.AdminDashboard a) {
+                a.showHome();
+                return;
+            }
+            if (c instanceof com.cureone.gui.dashboards.PharmacistDashboard p) {
+                p.showHome();
+                return;
+            }
+            c = c.getParent();
+        }
+    }
+
+
 }
