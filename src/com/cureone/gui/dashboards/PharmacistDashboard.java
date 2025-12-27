@@ -57,14 +57,28 @@ public class PharmacistDashboard extends JPanel {
         add(contentPanel, BorderLayout.CENTER);
 
         // ===== ACTIONS =====
+
+//        medicineBtn.addActionListener(e ->
+//                switchPanel(
+//                        new MedicineManagementPanel(
+//                                GUIContext.medicineService,
+//                                frame
+//                        )
+//                )
+//        );
+
+
         medicineBtn.addActionListener(e ->
                 switchPanel(
-                        new MedicineManagementPanel(
+                        new MedicinePanel(
                                 GUIContext.medicineService,
+                                pharmacistId,
+                                "PHARMACIST",
                                 frame
                         )
                 )
         );
+
 
         inventoryBtn.addActionListener(e ->
                 switchPanel(
@@ -77,16 +91,35 @@ public class PharmacistDashboard extends JPanel {
                 )
         );
 
+//        billingBtn.addActionListener(e ->
+//                switchPanel(
+//                        new BillingManagementPanel(
+//                                GUIContext.billingService,
+//                                frame
+//                        )
+//                )
+//        );
+
         billingBtn.addActionListener(e ->
                 switchPanel(
                         new BillingManagementPanel(
                                 GUIContext.billingService,
                                 frame
-                        )
+                        ) {
+                            @Override
+                            public void addNotify() {
+                                super.addNotify();
+                                this.putClientProperty("PARENT", "PHARMACIST");
+                            }
+                        }
                 )
         );
 
         logoutBtn.addActionListener(e -> frame.showScreen(MainFrame.LOGIN));
+
+        //    temp change
+        setFocusable(true);
+        requestFocusInWindow();
     }
 
     // ===== HELPERS =====
@@ -104,5 +137,26 @@ public class PharmacistDashboard extends JPanel {
         contentPanel.add(panel, BorderLayout.CENTER);
         contentPanel.revalidate();
         contentPanel.repaint();
+
+
+
+        //    temp change
+        panel.setFocusable(true);
+        panel.requestFocusInWindow();
     }
+
+    public void showHome() {
+        contentPanel.removeAll();
+
+        JLabel welcome = new JLabel(
+                "Welcome Pharmacist – Choose an option",
+                SwingConstants.CENTER
+        );
+        welcome.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+
+        contentPanel.add(welcome, BorderLayout.CENTER);
+        contentPanel.revalidate();
+        contentPanel.repaint();
+    }
+
 }

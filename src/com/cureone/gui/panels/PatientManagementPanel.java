@@ -1,5 +1,6 @@
 package com.cureone.gui.panels;
 
+import com.cureone.gui.dashboards.AdminDashboard;
 import com.cureone.patientsandrecords.model.Patient;
 import com.cureone.patientsandrecords.service.PatientService;
 import com.cureone.gui.MainFrame;
@@ -56,7 +57,17 @@ public class PatientManagementPanel extends JPanel {
         editBtn.addActionListener(e -> editPatient());
         deleteBtn.addActionListener(e -> deletePatient());
         refreshBtn.addActionListener(e -> loadAll());
-        backBtn.addActionListener(e -> frame.showScreen(MainFrame.ADMIN));
+        //backBtn.addActionListener(e -> frame.showScreen(MainFrame.ADMIN));
+        backBtn.addActionListener(e -> {
+            Container c = getParent();
+            while (c != null && !(c instanceof AdminDashboard)) {
+                c = c.getParent();
+            }
+            if (c instanceof AdminDashboard ad) {
+                ad.showHome();
+            }
+        });
+
 
         actions.add(new JLabel("Patient ID:"));
         actions.add(searchField);

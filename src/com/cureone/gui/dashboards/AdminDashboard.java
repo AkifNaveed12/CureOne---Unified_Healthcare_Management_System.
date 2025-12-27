@@ -98,6 +98,10 @@ public class AdminDashboard extends JPanel {
 
 
         logoutBtn.addActionListener(e -> frame.showScreen(MainFrame.LOGIN));
+//    temp change
+        setFocusable(true);
+        requestFocusInWindow();
+
     }
 
     // ================= HELPERS =================
@@ -115,5 +119,26 @@ public class AdminDashboard extends JPanel {
         contentPanel.add(panel, BorderLayout.CENTER);
         contentPanel.revalidate();
         contentPanel.repaint();
+
+
+//    temp change
+        panel.setFocusable(true);
+        panel.requestFocusInWindow();
+    }
+
+    //fix for back
+    public void showHome() {
+        contentPanel.removeAll();
+
+        JLabel welcome = new JLabel(
+                "Welcome Admin – Select an option",
+                SwingConstants.CENTER
+        );
+        welcome.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+
+        contentPanel.add(welcome, BorderLayout.CENTER);
+        contentPanel.revalidate();
+        contentPanel.repaint();
     }
 }
+

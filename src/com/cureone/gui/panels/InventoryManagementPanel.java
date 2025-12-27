@@ -1,6 +1,7 @@
 package com.cureone.gui.panels;
 
 import com.cureone.gui.MainFrame;
+import com.cureone.gui.dashboards.AdminDashboard;
 import com.cureone.pharmacyandinventory.model.InventoryItem;
 import com.cureone.pharmacyandinventory.service.InventoryServices;
 
@@ -59,7 +60,17 @@ public class InventoryManagementPanel extends JPanel {
         searchBtn.addActionListener(e -> search());
         lowStockBtn.addActionListener(e -> loadLowStock());
         refreshBtn.addActionListener(e -> loadAll());
-        backBtn.addActionListener(e -> frame.showScreen(MainFrame.ADMIN));
+        //backBtn.addActionListener(e -> frame.showScreen(MainFrame.ADMIN));
+        backBtn.addActionListener(e -> {
+            Container c = getParent();
+            while (c != null && !(c instanceof AdminDashboard)) {
+                c = c.getParent();
+            }
+            if (c instanceof AdminDashboard ad) {
+                ad.showHome();
+            }
+        });
+
 
         actions.add(new JLabel("Search:"));
         actions.add(searchField);

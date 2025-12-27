@@ -3,6 +3,7 @@ package com.cureone.gui.panels;
 import com.cureone.appointmentsandscheduling.model.Doctor;
 import com.cureone.appointmentsandscheduling.service.DoctorService;
 import com.cureone.gui.MainFrame;
+import com.cureone.gui.dashboards.AdminDashboard;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -57,7 +58,17 @@ public class DoctorManagementPanel extends JPanel {
         deleteBtn.addActionListener(e -> deleteDoctor());
         refreshBtn.addActionListener(e -> loadAll());
         searchBtn.addActionListener(e -> search());
-        backBtn.addActionListener(e -> frame.showScreen(MainFrame.ADMIN));
+        //backBtn.addActionListener(e -> frame.showScreen(MainFrame.ADMIN));
+        backBtn.addActionListener(e -> {
+            Container c = getParent();
+            while (c != null && !(c instanceof AdminDashboard)) {
+                c = c.getParent();
+            }
+            if (c instanceof AdminDashboard ad) {
+                ad.showHome();
+            }
+        });
+
 
         actions.add(new JLabel("Doctor ID:"));
         actions.add(searchField);

@@ -1,5 +1,6 @@
 package com.cureone.gui.panels;
 
+import com.cureone.gui.dashboards.AdminDashboard;
 import com.cureone.pharmacyandinventory.model.Medicine;
 import com.cureone.pharmacyandinventory.service.MedicineService;
 import com.cureone.gui.MainFrame;
@@ -74,9 +75,13 @@ public class MedicinePanel extends JPanel {
 
         searchBtn.addActionListener(e -> search());
         refreshBtn.addActionListener(e -> loadAll());
-        backBtn.addActionListener(e ->
-                NavigationUtil.goBack(frame, role, userId)
-        );
+        backBtn.addActionListener(e -> handleBack());
+
+//        backBtn.addActionListener(e ->
+//                NavigationUtil.goBack(frame, role, userId)
+//        );
+
+
 
         right.add(new JLabel("Name:"));
         right.add(searchField);
@@ -204,4 +209,26 @@ public class MedicinePanel extends JPanel {
     private String safe(String v) {
         return v == null || v.isBlank() ? "-" : v;
     }
+
+    // ================= BACK HANDLER =================
+    private void handleBack() {
+        Container c = this.getParent();
+
+        while (c != null) {
+            if (c instanceof com.cureone.gui.dashboards.AdminDashboard a) {
+                a.showHome();
+                return;
+            }
+            if (c instanceof com.cureone.gui.dashboards.PharmacistDashboard p) {
+                p.showHome();
+                return;
+            }
+            if (c instanceof com.cureone.gui.dashboards.CustomerDashboard cu) {
+                cu.showHome();
+                return;
+            }
+            c = c.getParent();
+        }
+    }
+
 }

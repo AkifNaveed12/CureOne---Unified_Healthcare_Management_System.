@@ -54,11 +54,15 @@ public class JdbcMedicineRepository implements MedicineRepository {
     public List<Medicine> findAll() {
 
         String sql = """
-            SELECT m.id, m.name, m.manufacturer, m.expiry_date, m.price, m.quantity,
-                   c.id AS category_id, c.name AS category_name, c.description
-            FROM medicines m
-            LEFT JOIN categories c ON m.category_id = c.id
-        """;
+    SELECT 
+        m.id, m.name, m.manufacturer, m.expiry_date, m.price,
+        COALESCE(SUM(i.quantity), 0) AS quantity,
+        c.id AS category_id, c.name AS category_name, c.description
+    FROM medicines m
+    LEFT JOIN categories c ON m.category_id = c.id
+    LEFT JOIN inventory_items i ON i.medicine_id = m.id
+    GROUP BY m.id, c.id
+    """;
 
         List<Medicine> out = new ArrayList<>();
 
@@ -82,12 +86,16 @@ public class JdbcMedicineRepository implements MedicineRepository {
     public Medicine findById(int id) {
 
         String sql = """
-            SELECT m.id, m.name, m.manufacturer, m.expiry_date, m.price, m.quantity,
-                   c.id AS category_id, c.name AS category_name, c.description
-            FROM medicines m
-            LEFT JOIN categories c ON m.category_id = c.id
-            WHERE m.id = ?
-        """;
+                       SELECT
+                            m.id, m.name, m.manufacturer, m.expiry_date, m.price,
+                            COALESCE(SUM(i.quantity), 0) AS quantity,
+                            c.id AS category_id, c.name AS category_name, c.description
+                        FROM medicines m
+                        LEFT JOIN categories c ON m.category_id = c.id
+                        LEFT JOIN inventory_items i ON i.medicine_id = m.id
+                        WHERE m.id = ?
+                        GROUP BY m.id, c.id
+                       """;
 
         try (Connection c = DBUtil.getConnection();
              PreparedStatement ps = c.prepareStatement(sql)) {
@@ -170,12 +178,18 @@ public class JdbcMedicineRepository implements MedicineRepository {
     public List<Medicine> findByName(String name) {
 
         String sql = """
-            SELECT m.id, m.name, m.manufacturer, m.expiry_date, m.price, m.quantity,
-                   c.id AS category_id, c.name AS category_name, c.description
-            FROM medicines m
-            LEFT JOIN categories c ON m.category_id = c.id
-            WHERE m.name LIKE ?
-        """;
+            
+                        SELECT
+                            m.id, m.name, m.manufacturer, m.expiry_date, m.price,
+                            COALESCE(SUM(i.quantity), 0) AS quantity,
+                            c.id AS category_id, c.name AS category_name, c.description
+                        FROM medicines m
+                        LEFT JOIN categories c ON m.category_id = c.id
+                        LEFT JOIN inventory_items i ON i.medicine_id = m.id
+                        WHERE m.name LIKE ?
+                        GROUP BY m.id, c.id """;
+
+
 
         List<Medicine> out = new ArrayList<>();
 
@@ -250,4 +264,16 @@ public class JdbcMedicineRepository implements MedicineRepository {
 
         return m;
     }
+    public void updateQuantity(int medicineId, int qty) {
+        String sql = "UPDATE medicines SET quantity=? WHERE id=?";
+        try (Connection c = DBUtil.getConnection();
+             PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setInt(1, qty);
+            ps.setInt(2, medicineId);
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 }

@@ -29,6 +29,11 @@ public class CustomerDashboard extends JPanel {
 
         add(buildSidebar(), BorderLayout.WEST);
         add(buildContent(), BorderLayout.CENTER);
+
+
+        //    temp change
+        setFocusable(true);
+        requestFocusInWindow();
     }
 
     // ================= SIDEBAR =================
@@ -89,5 +94,18 @@ public class CustomerDashboard extends JPanel {
         btn.setBorder(BorderFactory.createEmptyBorder(12, 20, 12, 20));
         btn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         return btn;
+    }
+    public void showHome() {
+        contentPanel.removeAll();
+
+        JLabel welcome = new JLabel(
+                "Welcome Customer – Select an option",
+                SwingConstants.CENTER
+        );
+        welcome.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+
+        contentPanel.add(welcome, BorderLayout.CENTER);
+        contentPanel.revalidate();
+        contentPanel.repaint();
     }
 }
